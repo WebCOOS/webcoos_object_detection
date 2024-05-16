@@ -56,35 +56,10 @@ And then tested the same as running it outside of Docker
 python ./test/test_api.py
 ```
 
-## Tensorflow Serving
-
-The models can be served with Tensorflow Serving:
-
-```shell
-# Location of demo models
-export MODEL_NAME="yolo_detector"
-
-# Start TensorFlow Serving container and open the REST API port
-docker run -t --rm -p 8501:8501 \
-    -v "$(pwd)/${MODEL_NAME}:/models/${MODEL_NAME}" \
-    -e MODEL_NAME=${MODEL_NAME} \
-    tensorflow/serving
-```
-
-The HTTP endpoint can then be used to pass in JSON image data and write out results to files. See the `test_tf_serving.py` file for an example.
-
 ## Stream Processing
 
-The model can also be applied to a live stream using one of the `test/stream_*.py` files.
-
-Run model version 2
+Run YOLOv8 test:
 
 ```shell
-python ./test/stream_effdet2.py
-```
-
-Run model version 3
-
-```shell
-python ./test/stream_effdet3.py
+python ./test/yolov8_loop.py
 ```

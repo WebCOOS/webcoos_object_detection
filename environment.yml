@@ -1,4 +1,4 @@
-name: webcoos_yolo_detection
+name: webcoos_object_detection
 channels:
   - conda-forge
   - defaults
@@ -15,9 +15,9 @@ dependencies:
   # Model/ML-related
   - numpy
   - opencv
-  - pytorch>=1.8
-  - tensorflow
-  - torchvision
+  # - pytorch>=1.8
+  # - tensorflow
+  # - torchvision
   - ultralytics
   # For managing large git files
   - git-lfs

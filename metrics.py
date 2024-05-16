@@ -7,8 +7,6 @@ from prometheus_client import (
 )
 from model_version import (
     ModelFramework,
-    TFModelName,
-    TFModelVersion,
     YOLOModelName,
     YOLOModelVersion
 )
@@ -33,8 +31,6 @@ OBJECT_CLASSIFICATION_COUNTER = Counter(
 #       c.labels('get', '/')
 
 LABELS = (
-    ( ModelFramework.TF, TFModelName.yolo_detector, TFModelVersion.two, 'seal' ),
-    ( ModelFramework.TF, TFModelName.yolo_detector, TFModelVersion.three, 'seal' ),
     ( ModelFramework.YOLO, YOLOModelName.best_yolo, YOLOModelVersion.one, 'seal' ),
 )
 

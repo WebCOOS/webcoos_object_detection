@@ -4,7 +4,7 @@ channels:
   - defaults
 dependencies:
   # Python
-  - python=3.9
+  - python>=3.9,<3.13
   # API-related
   - fastapi
   - gunicorn
@@ -15,10 +15,11 @@ dependencies:
   # Model/ML-related
   - numpy
   - opencv
-  # - pytorch>=1.8
-  # - tensorflow
-  # - torchvision
+  # ultralytics dependencies
   - ultralytics
+  - pytorch>=1.8
+  - tensorflow
+  - torchvision
   # For managing large git files
   - git-lfs
   # Testing related

@@ -42,8 +42,8 @@ output_path = Path(os.environ.get(
 ))
 
 
-def get_yolo_model(model: str, version: str):
-    return YOLO_MODELS[model][version]
+def get_yolo_model(model: YOLOModelName, version: YOLOModelVersion):
+    return YOLO_MODELS[model.value][version.value]
 
 
 # Mounting the 'static' output files for the app

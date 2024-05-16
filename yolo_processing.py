@@ -1,12 +1,17 @@
 import os
-from typing import Union
+from typing import List, Set, Union
 import cv2
 import numpy as np
 from ultralytics import YOLO
 from pathlib import Path
 from score import ClassificationModelResult, BoundingBoxPoint
-from model_version import ModelFramework, YOLOModelName, YOLOModelVersion
-from metrics import increment_yolo_counter
+from model_version import (
+    ModelFramework,
+    YOLOModelName,
+    YOLOModelVersion,
+    YOLOModelObjectClassification
+)
+from metrics import increment_detection_counter, increment_object_counter
 import logging
 
 logger = logging.getLogger( __name__ )
@@ -74,7 +79,7 @@ def yolo_process_image(
         version = version.value
 
     ret: ClassificationModelResult = ClassificationModelResult(
-        ModelFramework.ULTRALYTICS.name,
+        ModelFramework.ultralytics.name,
         model,
         version
     )
@@ -93,6 +98,10 @@ def yolo_process_image(
     # If any score is above threshold, flag it as detected
     detected = False
 
+    yolo_object_class: YOLOModelObjectClassification = None
+
+    object_classes_detected: Set[YOLOModelObjectClassification] = set()
+
     for result in results:
         #for score, cls, cls_name, bbox in zip(result.boxes.conf, result.boxes.cls, result.names, result.boxes.xyxy):
         for box in result.boxes:
@@ -102,6 +111,15 @@ def yolo_process_image(
             cls_name = yolo_model.names[cls]
 
             if score < threshold:
+                continue
+
+            try:
+                yolo_object_class = YOLOModelObjectClassification( cls_name )
+            except ValueError:
+                logger.warning(
+                    f"Detected class of '{cls_name}', but not among accepted "
+                    "classes, ignoring."
+                )
                 continue
 
             detected = True
@@ -114,39 +132,51 @@ def yolo_process_image(
             y_max = int(min(h, y2))
             x_max = int(min(w, x2))
 
-            if cls is not None:
-                print (cls_name) #a dictionary name lookup based on integer index
+            if yolo_object_class is not None:
 
                 label = cls_name + ": " + ": {:.2f}%".format(score * 100)
-
-                # Update Prometheus metrics
-                increment_yolo_counter(
-                    ModelFramework.ULTRALYTICS.name,
-                    model,
-                    version,
-                    cls_name
-                )
-
                 img_boxes = cv2.rectangle(img_boxes, (x_min, y_max), (x_max, y_min), (0, 0, 255), 2)
                 cv2.putText(img_boxes, label, (x_min, y_max - 10), font, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
 
                 ret.add(
-                    classification_name=cls_name,
+                    classification_name=yolo_object_class.value,
                     classification_score=score,
                     bbox=(
                         BoundingBoxPoint( x_min, y_min ),
                         BoundingBoxPoint( x_max, y_max ),
                     )
                 )
-            else:
-                raise Exception(
-                    f"Classification {cls} not handled, model names "
-                    f"are: {repr(yolo_model.names)}"
+
+                # Update object metrics
+                increment_object_counter(
+                    ModelFramework.ultralytics.name,
+                    model,
+                    version,
+                    yolo_object_class.value
+                )
+
+                # Track which of the object classes were detected for later
+                # metrics counters
+                object_classes_detected.add(
+                    yolo_object_class
                 )
 
     # outp = cv2.resize(img_boxes, (1280, 720))
 
     if detected is True:
+
+        if( object_classes_detected ):
+
+            for ocd in object_classes_detected:
+
+                # Update Prometheus metrics for each of the classes that were
+                # detected
+                increment_detection_counter(
+                    ModelFramework.ultralytics.name,
+                    model,
+                    version,
+                    ocd.value
+                )
 
         output_file.parent.mkdir(parents=True, exist_ok=True)
         cv2.imwrite(str(output_file), img_boxes )

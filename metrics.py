@@ -8,13 +8,25 @@ from prometheus_client import (
 from model_version import (
     ModelFramework,
     YOLOModelName,
-    YOLOModelVersion
+    YOLOModelVersion,
+    YOLOModelObjectClassification
 )
 
 
-OBJECT_CLASSIFICATION_COUNTER = Counter(
-    'object_classification_counter',
-    'Count of classifications',
+OBJECT_CLASSIFICATION_DETECTION_COUNTER = Counter(
+    'object_classification_detection_counter',
+    'Overall count of inputs with successful detections (that meet a threshold)',
+    [
+        'model_framework',
+        'model_name',
+        'model_version',
+        'classification_name',
+    ]
+)
+
+OBJECT_CLASSIFICATION_OBJECT_COUNTER = Counter(
+    'object_classification_object_counter',
+    'Count of detected objects in all inputs (that meet a threshold)',
     [
         'model_framework',
         'model_name',
@@ -30,12 +42,25 @@ OBJECT_CLASSIFICATION_COUNTER = Counter(
 #
 #       c.labels('get', '/')
 
-LABELS = (
-    ( ModelFramework.ULTRALYTICS, YOLOModelName.yolo, YOLOModelVersion.v8n, 'TODO' ),
-)
+LABELS = [
+    (
+        ModelFramework.ultralytics,
+        YOLOModelName.yolo,
+        YOLOModelVersion.v8n,
+        oc.value
+    ) for oc in YOLOModelObjectClassification
+]
 
 for ( fw, mdl, ver, cls_name ) in LABELS:
-    OBJECT_CLASSIFICATION_COUNTER.labels(
+    # Initialize counters
+    OBJECT_CLASSIFICATION_DETECTION_COUNTER.labels(
+        fw.name,
+        mdl.value,
+        ver.value,
+        cls_name,
+    )
+
+    OBJECT_CLASSIFICATION_OBJECT_COUNTER.labels(
         fw.name,
         mdl.value,
         ver.value,
@@ -49,13 +74,27 @@ def make_metrics_app():
     return make_asgi_app( registry = registry )
 
 
-def increment_yolo_counter(
+def increment_detection_counter(
     fw: str,
     mdl_name: str,
     mdl_version: str,
     cls_name: str
 ):
-    OBJECT_CLASSIFICATION_COUNTER.labels(
+    OBJECT_CLASSIFICATION_DETECTION_COUNTER.labels(
+        fw,
+        mdl_name,
+        mdl_version,
+        cls_name
+    ).inc()
+
+
+def increment_object_counter(
+    fw: str,
+    mdl_name: str,
+    mdl_version: str,
+    cls_name: str
+):
+    OBJECT_CLASSIFICATION_OBJECT_COUNTER.labels(
         fw,
         mdl_name,
         mdl_version,

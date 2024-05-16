@@ -1,6 +1,6 @@
 services:
   api:
-    image: webcoos-seal-detection:latest
+    image: webcoos-yolo-detection:latest
     build:
       context:      .
       dockerfile:   Dockerfile

@@ -7,7 +7,7 @@ class ModelFramework(str, Enum):
 
 
 class TFModelName(str, Enum):
-    seal_detector = "seal_detector"
+    yolo_detector = "yolo_detector"
 
 
 class TFModelVersion(str, Enum):
@@ -16,7 +16,7 @@ class TFModelVersion(str, Enum):
 
 
 class YOLOModelName(str, Enum):
-    best_seal = "best_seal"
+    best_yolo = "best_yolo"
 
 
 class YOLOModelVersion(str, Enum):

@@ -9,6 +9,8 @@ ENV PROMETHEUS_MULTIPROC_DIR /tmp/metrics
 
 USER root
 
+#ARG DEBIAN_FRONTEND=noninteractive
+
 RUN apt-get update && apt-get install -y \
         libgl1 \
         libglib2.0-0 \
@@ -27,10 +29,11 @@ RUN apt-get update && apt-get install -y \
     mkdir ${PROMETHEUS_MULTIPROC_DIR} && \
     chown mambauser:mambauser ${PROMETHEUS_MULTIPROC_DIR}
 
+#RUN pip install opencv-python
 
 COPY --chown=mambauser:mambauser environment.yml /tmp/environment.yml
-RUN --mount=type=cache,id=webcoos_seal_detector,target=/opt/conda/pkgs \
-    --mount=type=cache,id=webcoos_seal_detector,target=/root/.cache/pip \
+RUN --mount=type=cache,id=webcoos_yolo_detector,target=/opt/conda/pkgs \
+    --mount=type=cache,id=webcoos_yolo_detector,target=/root/.cache/pip \
     micromamba install -c conda-forge --name base --yes --file /tmp/environment.yml && \
     micromamba clean --all --yes
 

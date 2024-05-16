@@ -6,7 +6,7 @@ import tensorflow as tf
 from pathlib import Path
 from score import ClassificationModelResult, BoundingBoxPoint
 from model_version import ModelFramework, TFModelName, TFModelVersion
-from metrics import increment_seal_detection_counter, increment_seal_object_counter
+from metrics import increment_yolo_counter
 import logging
 
 logger = logging.getLogger( __name__ )
@@ -24,9 +24,9 @@ MODEL_FOLDER = Path(os.environ.get(
 ))
 
 TF_MODELS = {
-    "seal_detector": {
-        "2": tf.saved_model.load(str(MODEL_FOLDER / "tf" / "seal_detector" / "2")),
-        "3": tf.saved_model.load(str(MODEL_FOLDER / "tf" / "seal_detector" / "3")),
+    "yolo_detector": {
+        "2": tf.saved_model.load(str(MODEL_FOLDER / "tf" / "yolo_detector" / "2")),
+        "3": tf.saved_model.load(str(MODEL_FOLDER / "tf" / "yolo_detector" / "3")),
     }
 }
 
@@ -130,20 +130,14 @@ def tf_process_image(
             cv2.LINE_AA
         )
 
-        # Update object metrics
-        increment_seal_object_counter(
-            ModelFramework.TF.name,
-            model,
-            version
-        )
-
     if detected is True:
 
-        # Update detection metrics
-        increment_seal_detection_counter(
+        # Update metrics
+        increment_yolo_counter(
             ModelFramework.TF.name,
             model,
-            version
+            version,
+            'seal'
         )
 
         output_file.parent.mkdir(parents=True, exist_ok=True)

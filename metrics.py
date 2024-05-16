@@ -14,20 +14,9 @@ from model_version import (
 )
 
 
-OBJECT_CLASSIFICATION_DETECTION_COUNTER = Counter(
-    'object_classification_detection_counter',
-    'Overall count of inputs with successful detections (that meet a threshold)',
-    [
-        'model_framework',
-        'model_name',
-        'model_version',
-        'classification_name',
-    ]
-)
-
-OBJECT_CLASSIFICATION_OBJECT_COUNTER = Counter(
-    'object_classification_object_counter',
-    'Count of detected objects in all inputs (that meet a threshold)',
+OBJECT_CLASSIFICATION_COUNTER = Counter(
+    'object_classification_counter',
+    'Count of classifications',
     [
         'model_framework',
         'model_name',
@@ -44,25 +33,17 @@ OBJECT_CLASSIFICATION_OBJECT_COUNTER = Counter(
 #       c.labels('get', '/')
 
 LABELS = (
-    ( ModelFramework.TF, TFModelName.seal_detector, TFModelVersion.two ),
-    ( ModelFramework.TF, TFModelName.seal_detector, TFModelVersion.three ),
-    ( ModelFramework.YOLO, YOLOModelName.best_seal, YOLOModelVersion.one ),
+    ( ModelFramework.TF, TFModelName.yolo_detector, TFModelVersion.two, 'seal' ),
+    ( ModelFramework.TF, TFModelName.yolo_detector, TFModelVersion.three, 'seal' ),
+    ( ModelFramework.YOLO, YOLOModelName.best_yolo, YOLOModelVersion.one, 'seal' ),
 )
-__SEAL = 'seal'
 
-for ( fw, mdl, ver ) in LABELS:
-    OBJECT_CLASSIFICATION_DETECTION_COUNTER.labels(
+for ( fw, mdl, ver, cls_name ) in LABELS:
+    OBJECT_CLASSIFICATION_COUNTER.labels(
         fw.name,
         mdl.value,
         ver.value,
-        __SEAL,
-    )
-
-    OBJECT_CLASSIFICATION_OBJECT_COUNTER.labels(
-        fw.name,
-        mdl.value,
-        ver.value,
-        __SEAL,
+        cls_name,
     )
 
 
@@ -72,26 +53,15 @@ def make_metrics_app():
     return make_asgi_app( registry = registry )
 
 
-def increment_seal_detection_counter(
-    fw: str,
-    mdl_name: str,
-    mdl_version: str
-):
-    OBJECT_CLASSIFICATION_DETECTION_COUNTER.labels(
-        fw,
-        mdl_name,
-        mdl_version,
-        __SEAL
-    ).inc()
-
-def increment_seal_object_counter(
+def increment_yolo_counter(
     fw: str,
     mdl_name: str,
     mdl_version: str,
+    cls_name: str
 ):
-    OBJECT_CLASSIFICATION_OBJECT_COUNTER.labels(
+    OBJECT_CLASSIFICATION_COUNTER.labels(
         fw,
         mdl_name,
         mdl_version,
-        __SEAL
+        cls_name
     ).inc()

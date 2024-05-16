@@ -1,6 +1,6 @@
-# Seal Detection
+# YOLO Detection
 
-Pre-trained ML models to detect seals in images, and APIs to use the models.
+Pre-trained ML models to detect COCO object(best_yolo),seals(best_seal) in images, and APIs to use the models.
 
 ![Seal](example.jpg "Seal")
 
@@ -13,14 +13,14 @@ its faster alternative, `micromamba`.
 
 ```shell
 conda env create -f environment.yml
-conda activate webcoos_seal_detection
+conda activate webcoos_yolo_detection
 ```
 
 `micromamba` environment creation and activation:
 
 ```shell
 micromamba create -f environment.yml
-micromamba activate webcoos_seal_detection
+micromamba activate webcoos_yolo_detection
 ```
 
 ## FastAPI Serving
@@ -46,8 +46,8 @@ python ./test/test_api.py
 The FastAPI server can also be served using Docker:
 
 ```shell
-docker build -t seal_det_api .
-docker run --gpus all --rm --name seal_detector -v $(pwd)/outputs/docker:/outputs -p 8000:8000 seal_det_api
+docker build -t yolo_det_api .
+docker run --gpus all --rm --name yolo_detector -v $(pwd)/outputs/docker:/outputs -p 8000:8000 yolo_det_api
 ```
 
 And then tested the same as running it outside of Docker
@@ -62,7 +62,7 @@ The models can be served with Tensorflow Serving:
 
 ```shell
 # Location of demo models
-export MODEL_NAME="seal_detector"
+export MODEL_NAME="yolo_detector"
 
 # Start TensorFlow Serving container and open the REST API port
 docker run -t --rm -p 8501:8501 \

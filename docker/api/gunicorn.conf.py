@@ -1,6 +1,6 @@
 from prometheus_client import multiprocess
 
-proc_name = 'webcoos-seal-detector-api'
+proc_name = 'webcoos-yolo-detector-api'
 bind = "0.0.0.0:8000"
 workers = 4
 threads = 1

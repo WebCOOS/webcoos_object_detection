@@ -1,6 +1,7 @@
-# YOLO Detection
+# WebCOOS Object Detection
 
-Pre-trained ML models to detect COCO object(best_yolo),seals(best_seal) in images, and APIs to use the models.
+Pre-trained ML models to detect general objects in images, embedded in a
+FastAPI REST interface.
 
 ![Seal](example.jpg "Seal")
 
@@ -13,14 +14,14 @@ its faster alternative, `micromamba`.
 
 ```shell
 conda env create -f environment.yml
-conda activate webcoos_yolo_detection
+conda activate webcoos_object_detection
 ```
 
 `micromamba` environment creation and activation:
 
 ```shell
 micromamba create -f environment.yml
-micromamba activate webcoos_yolo_detection
+micromamba activate webcoos_object_detection
 ```
 
 ## FastAPI Serving
@@ -46,8 +47,8 @@ python ./test/test_api.py
 The FastAPI server can also be served using Docker:
 
 ```shell
-docker build -t yolo_det_api .
-docker run --gpus all --rm --name yolo_detector -v $(pwd)/outputs/docker:/outputs -p 8000:8000 yolo_det_api
+docker build -t webcoos_object_detection:latest .
+docker run --gpus all --rm --name obj_detector -v $(pwd)/outputs/docker:/outputs -p 8000:8000 webcoos_object_detection
 ```
 
 And then tested the same as running it outside of Docker

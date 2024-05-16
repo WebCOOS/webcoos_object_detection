@@ -75,7 +75,7 @@ async def index():
     return RedirectResponse("/docs")
 
 
-# YOLO / best_seal.pt endpoints
+# YOLO object detection endpoints
 @app.post(
     f"{YOLO_ENDPOINT_PREFIX}/{{model}}/{{version}}/upload",
     tags=['yolo'],

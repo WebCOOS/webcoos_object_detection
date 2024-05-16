@@ -32,8 +32,8 @@ RUN apt-get update && apt-get install -y \
 #RUN pip install opencv-python
 
 COPY --chown=mambauser:mambauser environment.yml /tmp/environment.yml
-RUN --mount=type=cache,id=webcoos_yolo_detector,target=/opt/conda/pkgs \
-    --mount=type=cache,id=webcoos_yolo_detector,target=/root/.cache/pip \
+RUN --mount=type=cache,id=webcoos_object_detector,target=/opt/conda/pkgs \
+    --mount=type=cache,id=webcoos_object_detector,target=/root/.cache/pip \
     micromamba install -c conda-forge --name base --yes --file /tmp/environment.yml && \
     micromamba clean --all --yes
 

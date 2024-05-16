@@ -1,6 +1,6 @@
 services:
   api:
-    image: webcoos-yolo-detection:latest
+    image: webcoos-object-detection:latest
     build:
       context:      .
       dockerfile:   Dockerfile

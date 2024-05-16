@@ -21,8 +21,22 @@ MODEL_FOLDER = Path(os.environ.get(
 ))
 
 YOLO_MODELS = {
-    "best_yolo": {
-        "1": YOLO(str(MODEL_FOLDER / "yolo" / "best_yolo" / "1" / "best_seal.pt" )),
+    # public-facing model name
+    "yolo": {
+        # public-facing model version
+        "v8n": YOLO(
+            str(
+                MODEL_FOLDER \
+                    # tech stack (yolo, torchvision, tensorflow, etc.)
+                    / "ultralytics" \
+                    # model name (within the tech stack)
+                    / "yolo" \
+                    # model version (for that model)
+                    / "v8n" \
+                    # versioned file for this model
+                    / "yolov8n.pt"
+            )
+        ),
     }
 }
 
@@ -60,7 +74,7 @@ def yolo_process_image(
         version = version.value
 
     ret: ClassificationModelResult = ClassificationModelResult(
-        ModelFramework.YOLO.name,
+        ModelFramework.ULTRALYTICS.name,
         model,
         version
     )
@@ -82,7 +96,7 @@ def yolo_process_image(
     for result in results:
         #for score, cls, cls_name, bbox in zip(result.boxes.conf, result.boxes.cls, result.names, result.boxes.xyxy):
         for box in result.boxes:
-    
+
             score = box.conf.item()
             cls = int(box.cls.item())
             cls_name = yolo_model.names[cls]
@@ -99,20 +113,20 @@ def yolo_process_image(
             x_min = int(max(1, x1))
             y_max = int(min(h, y2))
             x_max = int(min(w, x2))
-            
+
             if cls is not None:
                 print (cls_name) #a dictionary name lookup based on integer index
-                
+
                 label = cls_name + ": " + ": {:.2f}%".format(score * 100)
 
                 # Update Prometheus metrics
                 increment_yolo_counter(
-                    ModelFramework.YOLO.name,
+                    ModelFramework.ULTRALYTICS.name,
                     model,
                     version,
-                    cls_name 
+                    cls_name
                 )
-                 
+
                 img_boxes = cv2.rectangle(img_boxes, (x_min, y_max), (x_max, y_min), (0, 0, 255), 2)
                 cv2.putText(img_boxes, label, (x_min, y_max - 10), font, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
 

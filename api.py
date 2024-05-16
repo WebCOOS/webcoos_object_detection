@@ -30,7 +30,7 @@ class UrlParams(BaseModel):
     url: str
 
 
-YOLO_ENDPOINT_PREFIX = "/yolo"
+ULTRALYTICS_ENDPOINT_PREFIX = "/ultralytics"
 ALLOWED_IMAGE_EXTENSIONS = (
     "jpg",
     "png"
@@ -77,8 +77,8 @@ async def index():
 
 # YOLO object detection endpoints
 @app.post(
-    f"{YOLO_ENDPOINT_PREFIX}/{{model}}/{{version}}/upload",
-    tags=['yolo'],
+    f"{ULTRALYTICS_ENDPOINT_PREFIX}/{{model}}/{{version}}/upload",
+    tags=['ultralytics'],
     summary="Ultralytics/YOLOv8 model prediction on image upload",
 )
 def yolo_from_upload(

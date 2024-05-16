@@ -2,11 +2,11 @@ from enum import Enum
 
 
 class ModelFramework(str, Enum):
-    YOLO = "YOLO"
+    ULTRALYTICS = "ULTRALYTICS"
 
 class YOLOModelName(str, Enum):
-    best_yolo = "best_yolo"
+    yolo = "yolo"
 
 
 class YOLOModelVersion(str, Enum):
-    one = "1"
+    v8n = "v8n"

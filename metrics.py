@@ -31,7 +31,7 @@ OBJECT_CLASSIFICATION_COUNTER = Counter(
 #       c.labels('get', '/')
 
 LABELS = (
-    ( ModelFramework.YOLO, YOLOModelName.best_yolo, YOLOModelVersion.one, 'seal' ),
+    ( ModelFramework.ULTRALYTICS, YOLOModelName.yolo, YOLOModelVersion.v8n, 'TODO' ),
 )
 
 for ( fw, mdl, ver, cls_name ) in LABELS:

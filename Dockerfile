@@ -1,5 +1,5 @@
-FROM mambaorg/micromamba:1.3.1-jammy-cuda-11.7.1
-LABEL MAINTAINER="Kyle Wilcox <kyle@axds.co>"
+FROM mambaorg/micromamba:1.5.8-jammy
+LABEL MAINTAINER="Josh Rhoades <josh@axds.co>"
 
 ENV MODEL_DIRECTORY /models
 ENV OUTPUT_DIRECTORY /outputs

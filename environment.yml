@@ -18,7 +18,6 @@ dependencies:
   # ultralytics dependencies
   - ultralytics
   - pytorch>=1.8
-  - tensorflow
   - torchvision
   # For managing large git files
   - git-lfs

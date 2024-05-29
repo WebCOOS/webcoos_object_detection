@@ -49,6 +49,13 @@ LABELS = [
         YOLOModelVersion.v8n,
         oc.value
     ) for oc in YOLOModelObjectClassification
+] + [
+    (
+        ModelFramework.sahi,
+        YOLOModelName.yolo,
+        YOLOModelVersion.v8n,
+        oc.value
+    ) for oc in YOLOModelObjectClassification
 ]
 
 for ( fw, mdl, ver, cls_name ) in LABELS:

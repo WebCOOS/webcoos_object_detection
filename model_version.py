@@ -3,6 +3,7 @@ from enum import Enum
 
 class ModelFramework(str, Enum):
     ultralytics = "ultralytics"
+    sahi = "sahi"
 
 
 class YOLOModelName(str, Enum):
@@ -11,6 +12,23 @@ class YOLOModelName(str, Enum):
 
 class YOLOModelVersion(str, Enum):
     v8n = "v8n"
+
+
+# SAHI models / versions will track what's defined for YOLO, as the SAHI
+# method re-uses the other models.
+class SAHIModelName(str, Enum):
+    yolo = "yolo"
+
+
+class SAHIModelVersion(str, Enum):
+    v8n = "v8n"
+
+
+class SAHISliceSize(int, Enum):
+    slice_128   = 128
+    slice_256   = 256
+    slice_512   = 512
+    slice_1024  = 1024
 
 
 class YOLOModelObjectClassification(str, Enum):

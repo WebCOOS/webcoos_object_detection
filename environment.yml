@@ -19,6 +19,8 @@ dependencies:
   - ultralytics
   - pytorch>=1.8
   - torchvision
+  # sahi dependencies
+  - sahi
   # For managing large git files
   - git-lfs
   # Testing related

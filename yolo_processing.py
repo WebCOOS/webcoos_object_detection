@@ -17,7 +17,7 @@ import logging
 logger = logging.getLogger( __name__ )
 width = 896
 height = 896
-threshold = 0.5
+DEFAULT_YOLO_THRESHOLD = 0.5
 font = cv2.FONT_HERSHEY_SIMPLEX
 
 MODEL_FOLDER = Path(os.environ.get(
@@ -32,14 +32,14 @@ YOLO_MODELS = {
         "v8n": YOLO(
             str(
                 MODEL_FOLDER \
-                    # tech stack (yolo, torchvision, tensorflow, etc.)
-                    / "ultralytics" \
-                    # model name (within the tech stack)
-                    / "yolo" \
-                    # model version (for that model)
-                    / "v8n" \
-                    # versioned file for this model
-                    / "yolov8n.pt"
+                # tech stack (yolo, torchvision, tensorflow, etc.)
+                / "ultralytics" \
+                # model name (within the tech stack)
+                / "yolo" \
+                # model version (for that model)
+                / "v8n" \
+                # versioned file for this model
+                / "yolov8n.pt"
             )
         ),
     }
@@ -54,7 +54,9 @@ def yolo_process_image(
     model: Union[YOLOModelName, str],
     version: Union[YOLOModelVersion, str],
     name: str,
-    bytedata: bytes
+    bytedata: bytes,
+    confidence_threshold: float = None,
+    cls_names_valid: List[YOLOModelObjectClassification] = None,
 ):
 
     assert yolo_model, \
@@ -78,6 +80,25 @@ def yolo_process_image(
     if( isinstance( version, YOLOModelVersion ) ):
         version = version.value
 
+    if confidence_threshold is None:
+        confidence_threshold = DEFAULT_YOLO_THRESHOLD
+
+    assert confidence_threshold >= 0.0 and confidence_threshold <= 1.0
+
+    if (
+        cls_names_valid is None
+        or len( [ x for x in cls_names_valid if x ]) <= 0
+    ):
+        # Default to the full list of available class names
+        cls_names_valid = list( YOLOModelObjectClassification )
+
+    assert all(
+        [
+            isinstance( x, YOLOModelObjectClassification )
+            for x in cls_names_valid
+        ]
+    )
+
     ret: ClassificationModelResult = ClassificationModelResult(
         ModelFramework.ultralytics.name,
         model,
@@ -93,7 +114,7 @@ def yolo_process_image(
     img_boxes = frame
 
     #use YOLOv8
-    results = yolo_model.predict(frame, conf = 0.2)
+    results = yolo_model.predict(frame, conf = 0.1)
 
     # If any score is above threshold, flag it as detected
     detected = False
@@ -110,7 +131,7 @@ def yolo_process_image(
             cls = int(box.cls.item())
             cls_name = yolo_model.names[cls]
 
-            if score < threshold:
+            if score < confidence_threshold:
                 continue
 
             try:
@@ -120,6 +141,11 @@ def yolo_process_image(
                     f"Detected class of '{cls_name}', but not among accepted "
                     "classes, ignoring."
                 )
+                continue
+
+            if yolo_object_class not in cls_names_valid:
+                # Skip object, even if it meets with our threshold, as we aren't
+                # interested for this particular detection
                 continue
 
             detected = True

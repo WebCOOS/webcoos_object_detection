@@ -64,3 +64,51 @@ Run YOLOv8 test:
 ```shell
 python ./test/yolov8_loop.py
 ```
+
+## Authentication for Customized Metrics
+
+There is an optional feature of the API to allow for tracking its detection
+metrics against specific `groups` and `assets`.
+
+*   An `asset` is any device that provides the imagery that is used as input to
+    the API. For example: a camera pointing at a beach on Oak Island may be
+    referred to with its asset name `oakisland_east`.
+*   A `group` is an owning organization or operating organization responsible
+    for said asset. This could be an academic institution, a business, etc. For
+    the Oak Island, the device could be owned by the University of North
+    Carolina, Wilmington (UNCW), and its group name could be `uncw`.
+
+By default, the API will track all metrics against the group `any`, and the
+asset `any`. Example metrics stanza:
+
+```
+object_classification_detection_counter_total{asset="any",classification_name="sports ball",group="any",model_framework="sahi",model_name="yolo",model_version="v8n"} 0.0
+object_classification_detection_counter_total{asset="any",classification_name="kite",group="any",model_framework="sahi",model_name="yolo",model_version="v8n"} 0.0
+object_classification_detection_counter_total{asset="any",classification_name="surfboard",group="any",model_framework="sahi",model_name="yolo",model_version="v8n"} 0.0
+```
+
+
+To specify a `group` and `asset` to be calculated apart from the catch-all
+`any`, you must included the following headers in your endpoint requests:
+
+```
+Authorization: Bearer [token]
+x-axds-group: [group]
+x-axds-asset: [asset]
+```
+
+The authorization `[token]` must be provided by API administrators. Without an
+authorization token, the object detection request will fail.
+
+If you have an authorization token, you will be able to submit requests for
+object detections, and any successful detections against your requested `group`
+and `asset` will be counted in their own metric labels (in addition to be
+counted against the `any`/`any` catch-all labels).
+
+Example:
+
+```
+object_classification_detection_counter_total{asset="oakisland_west",classification_name="umbrella",group="uncw",model_framework="sahi",model_name="yolo",model_version="v8n"} 1.0
+object_classification_detection_counter_total{asset="oakisland_west",classification_name="person",group="uncw",model_framework="sahi",model_name="yolo",model_version="v8n"} 1.0
+object_classification_detection_counter_total{asset="oakisland_east",classification_name="person",group="uncw",model_framework="sahi",model_name="yolo",model_version="v8n"} 1.0
+```

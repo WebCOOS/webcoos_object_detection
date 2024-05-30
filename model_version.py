@@ -59,7 +59,7 @@ class YOLOModelObjectClassification(str, Enum):
     # zebra = 'zebra'
     # giraffe = 'giraffe'
     # backpack = 'backpack'
-    # umbrella = 'umbrella'
+    umbrella = 'umbrella'
     # handbag = 'handbag'
     # tie = 'tie'
     # suitcase = 'suitcase'

@@ -130,7 +130,9 @@ def yolo_from_upload(
         model,
         version,
         name,
-        bytedata
+        bytedata,
+        confidence_threshold,
+        cls_names_valid
     )
 
     if( res_path is None ):

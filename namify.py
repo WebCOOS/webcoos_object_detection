@@ -1,9 +1,10 @@
 
 import hashlib
+from typing import Tuple
 import filetype
 
 
-def namify_for_content( b: bytes ) -> ( str, str, ):
+def namify_for_content( b: bytes ) -> Tuple[str, str]:
 
     assert b
 

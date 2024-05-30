@@ -57,6 +57,8 @@ def yolo_process_image(
     bytedata: bytes,
     confidence_threshold: float = None,
     cls_names_valid: List[YOLOModelObjectClassification] = None,
+    group: str = None,
+    asset: str = None,
 ):
 
     assert yolo_model, \
@@ -178,7 +180,9 @@ def yolo_process_image(
                     ModelFramework.ultralytics.name,
                     model,
                     version,
-                    yolo_object_class.value
+                    yolo_object_class.value,
+                    group,
+                    asset,
                 )
 
                 # Track which of the object classes were detected for later
@@ -201,7 +205,9 @@ def yolo_process_image(
                     ModelFramework.ultralytics.name,
                     model,
                     version,
-                    ocd.value
+                    ocd.value,
+                    group,
+                    asset,
                 )
 
         output_file.parent.mkdir(parents=True, exist_ok=True)

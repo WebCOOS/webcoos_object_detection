@@ -11,6 +11,11 @@ from sahi_processing import sahi_process_image, SAHI_MODELS
 from metrics import make_metrics_app
 from namify import namify_for_content
 from score import ClassificationModelResult
+from auth import (
+    TokenGroupAssetTuple,
+    get_token_group_asset_tuple,
+    assert_auth_token_group_and_asset
+)
 from model_version import (
     YOLOModelName,
     YOLOModelVersion,
@@ -115,8 +120,19 @@ def yolo_from_upload(
     confidence_threshold: float = Form( gt=0.0, lt=1.0, default=None ),
     cls_names_valid: List[YOLOModelObjectClassification] = Form( default=None ),
     yolo: Any = Depends(get_yolo_model),
+    tga: TokenGroupAssetTuple = Depends( get_token_group_asset_tuple ),
 ):
     """Perform model prediction based on selected YOLOv8 model / version."""
+
+    # Depending on what tokens, group, and asset are sent, allow/deny access
+    assert_auth_token_group_and_asset( tga )
+
+    group = None
+    asset = None
+
+    if tga.token:
+        ( group, asset ) = ( tga.group, tga.asset )
+
     bytedata = file.file.read()
 
     ( name, ext ) = namify_for_content( bytedata )
@@ -132,7 +148,9 @@ def yolo_from_upload(
         name,
         bytedata,
         confidence_threshold,
-        cls_names_valid
+        cls_names_valid,
+        group,
+        asset
     )
 
     if( res_path is None ):
@@ -178,9 +196,21 @@ def sahi_from_upload(
     cls_names_valid: List[YOLOModelObjectClassification] = Form( default=None ),
     slice_size: SAHISliceSize = Form( default=SAHISliceSize.slice_512 ),
     yolo: Any = Depends(get_sahi_model),
+    tga: TokenGroupAssetTuple = Depends( get_token_group_asset_tuple ),
+
 ):
     """Perform model prediction based on selected SAHI + YOLOv8 model / """
     """version."""
+
+    # Depending on what tokens, group, and asset are sent, allow/deny access
+    assert_auth_token_group_and_asset( tga )
+
+    group = None
+    asset = None
+
+    if tga.token:
+        ( group, asset ) = ( tga.group, tga.asset )
+
     bytedata = file.file.read()
 
     ( name, ext ) = namify_for_content( bytedata )
@@ -197,7 +227,9 @@ def sahi_from_upload(
         bytedata,
         confidence_threshold,
         slice_size,
-        cls_names_valid
+        cls_names_valid,
+        group,
+        asset
     )
 
     if( res_path is None ):

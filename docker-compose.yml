@@ -10,6 +10,7 @@ services:
      - "/outputs"
     environment:
      - OUTPUT_DIRECTORY=/outputs
+     - AUTHORIZED_BEARER_TOKENS
     command: >
       gunicorn api:app
         --bind "0.0.0.0:8000"

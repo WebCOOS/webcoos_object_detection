@@ -54,6 +54,8 @@ def sahi_process_image(
     confidence_threshold: float = None,
     slice_size: Union[SAHISliceSize, int] = SAHISliceSize.slice_512,
     cls_names_valid: List[YOLOModelObjectClassification] = None,
+    group: str = None,
+    asset: str = None,
 ):
 
     assert yolo_model, \
@@ -216,7 +218,9 @@ def sahi_process_image(
                 ModelFramework.sahi.name,
                 model,
                 version,
-                yolo_object_class.value
+                yolo_object_class.value,
+                group,
+                asset,
             )
 
             # Track which of the object classes were detected for later
@@ -239,7 +243,9 @@ def sahi_process_image(
                     ModelFramework.sahi.name,
                     model,
                     version,
-                    ocd.value
+                    ocd.value,
+                    group,
+                    asset,
                 )
 
         output_file.parent.mkdir(parents=True, exist_ok=True)

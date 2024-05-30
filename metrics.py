@@ -12,6 +12,8 @@ from model_version import (
     YOLOModelObjectClassification
 )
 
+ANY="any"
+
 
 OBJECT_CLASSIFICATION_DETECTION_COUNTER = Counter(
     'object_classification_detection_counter',
@@ -21,6 +23,8 @@ OBJECT_CLASSIFICATION_DETECTION_COUNTER = Counter(
         'model_name',
         'model_version',
         'classification_name',
+        'group',
+        'asset',
     ]
 )
 
@@ -32,6 +36,8 @@ OBJECT_CLASSIFICATION_OBJECT_COUNTER = Counter(
         'model_name',
         'model_version',
         'classification_name',
+        'group',
+        'asset',
     ]
 )
 
@@ -59,12 +65,17 @@ LABELS = [
 ]
 
 for ( fw, mdl, ver, cls_name ) in LABELS:
+
     # Initialize counters
+
     OBJECT_CLASSIFICATION_DETECTION_COUNTER.labels(
         fw.name,
         mdl.value,
         ver.value,
         cls_name,
+        # unknown group/asset
+        ANY,
+        ANY
     )
 
     OBJECT_CLASSIFICATION_OBJECT_COUNTER.labels(
@@ -72,6 +83,9 @@ for ( fw, mdl, ver, cls_name ) in LABELS:
         mdl.value,
         ver.value,
         cls_name,
+        # unknown group/asset
+        ANY,
+        ANY
     )
 
 
@@ -85,13 +99,27 @@ def increment_detection_counter(
     fw: str,
     mdl_name: str,
     mdl_version: str,
-    cls_name: str
+    cls_name: str,
+    group: str = None,
+    asset: str = None,
 ):
+    if group and asset:
+        OBJECT_CLASSIFICATION_DETECTION_COUNTER.labels(
+            fw,
+            mdl_name,
+            mdl_version,
+            cls_name,
+            group,
+            asset
+        ).inc()
+
     OBJECT_CLASSIFICATION_DETECTION_COUNTER.labels(
         fw,
         mdl_name,
         mdl_version,
-        cls_name
+        cls_name,
+        ANY,
+        ANY
     ).inc()
 
 
@@ -99,11 +127,25 @@ def increment_object_counter(
     fw: str,
     mdl_name: str,
     mdl_version: str,
-    cls_name: str
+    cls_name: str,
+    group: str = None,
+    asset: str = None,
 ):
+    if group and asset:
+        OBJECT_CLASSIFICATION_OBJECT_COUNTER.labels(
+            fw,
+            mdl_name,
+            mdl_version,
+            cls_name,
+            group,
+            asset
+        ).inc()
+
     OBJECT_CLASSIFICATION_OBJECT_COUNTER.labels(
         fw,
         mdl_name,
         mdl_version,
-        cls_name
+        cls_name,
+        ANY,
+        ANY
     ).inc()

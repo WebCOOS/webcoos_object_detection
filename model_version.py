@@ -90,7 +90,7 @@ class YOLOModelObjectClassification(str, Enum):
     # pizza = 'pizza'
     # donut = 'donut'
     # cake = 'cake'
-    # chair = 'chair'
+    chair = 'chair'
     # couch = 'couch'
     # potted_plant = 'potted plant'
     # bed = 'bed'

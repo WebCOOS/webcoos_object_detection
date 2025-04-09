@@ -1,0 +1,33 @@
+services:
+  api:
+    image: webcoos-object-detection:cuda11-5
+    build:
+      context:      .
+      dockerfile:   Dockerfile.cuda-11.5
+    ports:
+     - 8000:8000
+    tmpfs:
+     - "/outputs"
+    environment:
+     - OUTPUT_DIRECTORY=/outputs
+     - AUTHORIZED_BEARER_TOKENS
+    # Optional: nvidia GPU hardware support
+    runtime: 'nvidia'
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            capabilities: [
+              # 'gpu',
+              'compute',
+              # 'video',
+              'utility'
+            ]
+            count: 1
+    command: >
+      gunicorn api:app
+        --bind "0.0.0.0:8000"
+        --timeout 240
+        -w 1 --max-requests 100
+        -k uvicorn.workers.UvicornWorker

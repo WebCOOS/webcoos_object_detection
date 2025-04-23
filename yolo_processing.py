@@ -2,6 +2,7 @@ import os
 from typing import List, Set, Union
 import cv2
 import numpy as np
+import torch
 from ultralytics import YOLO
 from pathlib import Path
 from score import ClassificationModelResult, BoundingBoxPoint
@@ -25,6 +26,17 @@ MODEL_FOLDER = Path(os.environ.get(
     str(Path(__file__).parent)
 ))
 
+device = torch.device('cpu')
+if torch.cuda.is_available():
+    logger.warning(
+        "GPU/CUDA resources available"
+    )
+    device = torch.device('cuda')
+else:
+    logger.warning(
+        "GPU/CUDA resources not available (according to torch.cuda.is_available)"
+    )
+
 YOLO_MODELS = {
     # public-facing model name
     "yolo": {
@@ -40,10 +52,15 @@ YOLO_MODELS = {
                 / "v8n" \
                 # versioned file for this model
                 / "yolov8n.pt"
-            )
+            ),
         ),
     }
 }
+
+# Pre-emptively move models to selected device
+for ( _, v ) in YOLO_MODELS["yolo"].items():
+    v.to( device )
+
 
 #SEAL_CLASSIFICATION = 0.0
 

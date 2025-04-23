@@ -37,27 +37,6 @@ else:
         "GPU/CUDA resources not available (according to torch.cuda.is_available)"
     )
 
-# Resolving warning
-# torch.serialization.add_safe_globals(
-#     [
-#         ultralytics.nn.tasks.DetectionModel,
-#         torch.nn.modules.container.Sequential,
-#         ultralytics.nn.modules.Conv,
-#     ]
-# )
-
-# Save the original torch.load function
-# _original_torch_load = torch.load
-
-# # Define a new function that forces weights_only=False
-# def custom_torch_load(*args, **kwargs):
-#     if "weights_only" not in kwargs:
-#         kwargs["weights_only"] = False
-#     return _original_torch_load(*args, **kwargs)
-
-# Override torch.load globally
-# torch.load = custom_torch_load
-
 YOLO_MODELS = {
     # public-facing model name
     "yolo": {

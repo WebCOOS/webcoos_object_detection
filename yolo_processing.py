@@ -29,12 +29,12 @@ MODEL_FOLDER = Path(os.environ.get(
 device = torch.device('cpu')
 if torch.cuda.is_available():
     logger.warning(
-        "GPU/CUDA resources avaiable"
+        "GPU/CUDA resources available"
     )
     device = torch.device('cuda')
 else:
     logger.warning(
-        "GPU/CUDA resources not avaiable (according to torch.cuda.is_available)"
+        "GPU/CUDA resources not available (according to torch.cuda.is_available)"
     )
 
 # Resolving warning

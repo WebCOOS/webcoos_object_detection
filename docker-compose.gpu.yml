@@ -29,5 +29,7 @@ services:
       gunicorn api:app
         --bind "0.0.0.0:8000"
         --timeout 240
-        -w 1 --max-requests 100
-        -k uvicorn.workers.UvicornWorker
+        -w 1 --max-requests 10000
+        --access-logfile -
+        --error-logfile -
+        -k worker.LimitedConcurrencyUvicornWorker
